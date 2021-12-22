@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import InputForm from './InputForm.js'
 import Task from "./Task.js";
-import { Button } from 'react-bootstrap';
+import { Button, ProgressBar } from 'react-bootstrap';
 import { useHistory } from 'react-router-dom';
 import { useAuth } from './contexts/AuthContext';
 import { db, storage, auth } from "./firebase"
@@ -13,7 +13,7 @@ import {
   deleteDoc,
   doc,
 } from "firebase/firestore";
-import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
+import { ref, getDownloadURL, uploadBytesResumable, deleteObject } from "firebase/storage";
 import { Alert } from 'react-bootstrap';
 
 function App() {
@@ -70,6 +70,8 @@ function App() {
   async function deleteTask(id) {
     const userDoc = doc(db, "users", auth.currentUser.uid, "tasks", id);
     await deleteDoc(userDoc);
+    const desertRef = ref(storage, `files/${auth.currentUser.uid}/${id}`);
+    await deleteObject(desertRef)
     fetchTasks();
   }
 
@@ -84,6 +86,8 @@ function App() {
   async function delImg(id, input) {
     const userDoc = doc(db, "users", auth.currentUser.uid, "tasks", id);
     const newFields = { imgSrc: null };
+    const desertRef = ref(storage, `files/${auth.currentUser.uid}/${id}`);
+    await deleteObject(desertRef)
     await updateDoc(userDoc, newFields);
     fetchTasks();
   }
@@ -108,6 +112,12 @@ function App() {
       </h1>
       <InputForm onAdd={addTask} />
       <h3 className="">To-Do List</h3>
+        {(progress < 100 && progress > 0)? 
+          <div>
+            <h2>Uploading... {progress}%</h2> 
+            <ProgressBar now={progress} />
+          </div>
+          : <div></div>}
         {tasks.map((taskItem, index) => {
           return (
             <Task
@@ -118,7 +128,6 @@ function App() {
               onDelete={deleteTask}
               onEdit = {editTask}
               onAddImg = {uploadFiles}
-              uploadProg = {progress}
               onDelImg = {delImg}
             />
           );

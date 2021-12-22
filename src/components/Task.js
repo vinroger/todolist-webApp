@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import { Button } from 'react-bootstrap';
+import { Form } from 'react-bootstrap';
 
 function Task(props) {
     function handleDelete() {
@@ -42,10 +43,10 @@ function Task(props) {
 
     const nonEditingElement = (<div className="flex"><input type="checkbox" checked={isChecked} onChange={handleCheck} className="flex"></input>
     {isChecked? <strike><p className="flex">{props.content}</p></strike>: <p className="flex">{props.content}</p>}
-    <input type="file" onChange={handleAddImg} className="input" style={{ display: 'none' }} id="image-input"></input>
+    <input type="file" accept="image/*" onChange={handleAddImg} className="input" style={{ display: 'none' }} id="image-input"></input>
     <Button variant="info" component="span" onClick={uploadListener}>Upload Image</Button>
     
-    {props.uploadProg? <h2>Uploading done {props.uploadProg}%</h2>: <div></div>}
+    
     {props.imgSrc? 
         <div>
             <Button variant="danger" component="span" onClick={handleDelImg}>Delete Image</Button>
