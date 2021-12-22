@@ -35,7 +35,7 @@ export default function Signup() {
 
     return (
     <>
-        <Card>
+        <Card className="rounded p-2">
         <Card.Body>
             <h2 className="text-center mb-4">Sign Up</h2>
             {error && <Alert variant="danger">{error}</Alert>}
@@ -56,11 +56,12 @@ export default function Signup() {
                 Sign Up
             </Button>
             </Form>
+            <div className="w-100 text-center mt-5">
+            Already have an account? <Link to="/login">Log In</Link>
+            </div>
         </Card.Body>
         </Card>
-        <div className="w-100 text-center mt-2">
-        Already have an account? <Link to="/login">Log In</Link>
-        </div>
+        
     </>
     )
     }

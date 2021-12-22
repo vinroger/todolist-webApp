@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import { Button } from 'react-bootstrap';
-import { Form } from 'react-bootstrap';
+import { Form, Card, Container, Row, Col } from 'react-bootstrap';
 
 function Task(props) {
     function handleDelete() {
@@ -41,39 +41,63 @@ function Task(props) {
     const [isEditing, setEditing] = useState(false)
     const [input, setInput] = useState("")
 
-    const nonEditingElement = (<div className="flex"><input type="checkbox" checked={isChecked} onChange={handleCheck} className="flex"></input>
-    {isChecked? <strike><p className="flex">{props.content}</p></strike>: <p className="flex">{props.content}</p>}
-    <input type="file" accept="image/*" onChange={handleAddImg} className="input" style={{ display: 'none' }} id="image-input"></input>
-    <Button variant="info" component="span" onClick={uploadListener}>Upload Image</Button>
-    
-    
-    {props.imgSrc? 
-        <div>
-            <Button variant="danger" component="span" onClick={handleDelImg}>Delete Image</Button>
-            <img src={props.imgSrc} width="500px" alt={props.content} />
+    const imageElement = (<div>
+        {props.imgSrc && 
+        <div className="text-center mb-3">
+            <img className="mx-auto" src={props.imgSrc} width="200px" alt={props.content} />
+            <br></br>
+            <Button className="mx-auto mt-3" variant="danger" component="span" onClick={handleDelImg}>Delete Image</Button>
         </div>
-        :
-        <div>
-
-        </div>
-    }
-    <Button variant="warning" className="" onClick={handleEdit}>EDIT</Button>
-    <Button variant="danger" className="" onClick={handleDelete}>DELETE</Button></div>)
-
-    const editingElement = (<div className="my-5">
-    <form onSubmit={handleSubmit}>
-        <input type="text" value={input} className="inline" placeholder="Write Something" onChange={e => handleChange(e)}></input>
-        <div className="inline">
-            
-            <Button disabled={!input} variant="warning" className=""  type="submit">Submit Edit</Button>
-            <Button variant="info" className="btn-sm" onClick={undoEdit} >Undo</Button>
-        </div>
-    </form>
+        }
     </div>)
 
+    const nonEditingElement = (
+    <Card  className="rounded text-light mx-auto my-3" style={{backgroundColor : '#519259', width : '600px'}}>
+        <div className="">
+            <Container fluid className="mt-4">
+                <Row>
+                    <Col xs={1}>
+                        <input type="checkbox" checked={isChecked} onChange={handleCheck} className="flex ml-3 mt-2" style={{transform: 'scale(3)'}}></input>
+                    </Col>
+                    <Col xs={10}>
+                        {isChecked? <strike><h4 style={{textAlign: 'left'}}>{props.content}</h4></strike>: <h4 className="flex">{props.content}</h4>}  
+                    </Col>
+                </Row>
+            </Container>
+        </div>
+        
+        <div className="flex mx-auto mt-3">
+            <div className="mb-3">
+                <input type="file" accept="image/*" onChange={handleAddImg} className="input" style={{ display: 'none' }} id="image-input"></input>
+                <Button variant="info" component="span" className="mx-3" onClick={uploadListener}>Upload Image</Button>
+                <Button variant="warning" className="mx-3" onClick={handleEdit}>Edit</Button>
+                <Button variant="danger" className="mx-3" onClick={handleDelete}>Delete Task</Button>
+            </div>
+        {imageElement} 
+        </div>
+    </Card>
+    )
+
+    const editingElement = (
+        <Card  className="rounded text-light mx-auto my-3" style={{backgroundColor : '#519259', width : '600px'}}>
+            <div className="my-3 mx-auto">
+                <Form onSubmit={handleSubmit}>
+                    <Form.Label><h5 className="mt-2">Edit Task</h5></Form.Label>
+                    <Form.Control type="text" value={input} className="inline mx-auto" style={{width : '500px'}} placeholder="Write Something" onChange={e => handleChange(e)}></Form.Control>
+                    <div className="inline my-2 mb-4">
+                        
+                        <Button disabled={!input} variant="warning" className="mr-2"  type="submit">Submit Edit</Button>
+                        <Button variant="info" className="" onClick={undoEdit} >Undo</Button>
+                    </div>
+                </Form>
+            
+                {imageElement}
+            </div>
+    </Card>
+    )
 
     return (
-        <div className="mx-5 font-semibold font-mono">
+        <div>
             {isEditing? editingElement:nonEditingElement}
         </div>
     );

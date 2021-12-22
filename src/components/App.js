@@ -15,6 +15,7 @@ import {
 } from "firebase/firestore";
 import { ref, getDownloadURL, uploadBytesResumable, deleteObject } from "firebase/storage";
 import { Alert } from 'react-bootstrap';
+import { Card } from 'react-bootstrap';
 
 function App() {
   const [tasks, setTasks] = useState([]); // {id : " ... ", title: " ... ", "imgSrc" : "..."}
@@ -104,14 +105,22 @@ function App() {
     }
   }
 
+  const color1 = '#064635';
+  const color2 = "#519259";
+
   return (
-    <div className="text-center">
+    <div className="">
       {error && <Alert variant="danger">{error}</Alert>}
-      <h1 className="">
-        Get organized!
-      </h1>
-      <InputForm onAdd={addTask} />
-      <h3 className="">To-Do List</h3>
+      <Card className="text-center rounded m-5 text-light" style={{backgroundColor : color1}}>
+        <Card.Body style={{width : "700px"}}><h1 className="">Get organized!</h1></Card.Body>
+      </Card>
+      <Card className="text-center rounded m-5 text-light" style={{backgroundColor : color2}}>
+        <Card.Body>
+          <h3 className="">Add To-Do List</h3>
+          <InputForm className="rounded" onAdd={addTask} />
+      </Card.Body>
+      </Card>
+      
         {(progress < 100 && progress > 0)? 
           <div>
             <h2>Uploading... {progress}%</h2> 
@@ -132,8 +141,9 @@ function App() {
             />
           );
         })}
-      <div className="" style={{position:'relative',top:100}} >
-        <Button variant="link" onClick={handleLogout}>
+      <br></br>
+      <div className="" style={{position:'absolute',right:"1px",top :'1px'}} >
+        <Button variant="secondary" className="m-2" onClick={handleLogout}>
           Log Out
         </Button>
       </div>

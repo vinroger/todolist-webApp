@@ -4,13 +4,17 @@
 
 body {
   margin: 0;
-  background-color: #559481;
+  background: linear-gradient(370deg, #F0BB62 40%, #F4EEA9 30%) !important;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+.rounded {
+  border-radius: 1rem !important;
+}
+
 
 /* code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',

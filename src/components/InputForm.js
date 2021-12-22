@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import { Button } from 'react-bootstrap';
+import { Button, Form, Container, Row, Col } from 'react-bootstrap';
 
 
 
@@ -25,13 +25,19 @@ function InputForm(props) {
     }
     return (
         <div>
-        <form onSubmit={handleSubmit}>
-            <input type="text" value={input} className="" placeholder="Write Something" onChange={e => handleChange(e)}></input>
-            <div className="">
-                <Button disabled={!input} variant="primary" className=""  type="submit">Submit</Button>
-            </div>
+        <Form className="text-center" onSubmit={handleSubmit}>
+            <Container fluid className="mt-3">
+                <Row>
+                    <Col xs={10}>
+                        <Form.Control type="text" value={input} className="w-100 mx-auto inline " placeholder="Write Something" onChange={e => handleChange(e)}></Form.Control>
+                    </Col>
+                    <Col xs={1}>
+                    <Button disabled={!input} variant="dark" className=""  type="submit">Submit</Button>
+                    </Col>
+                </Row>
+            </Container>
             
-        </form>
+        </Form>
         </div>
     )
 }
