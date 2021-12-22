@@ -4,8 +4,7 @@ import Task from "./Task.js";
 import { Button } from 'react-bootstrap';
 import { useHistory } from 'react-router-dom';
 import { useAuth } from './contexts/AuthContext';
-import { db } from "./firebase"
-import { auth } from "./firebase"
+import { db, storage, auth } from "./firebase"
 import {
   collection,
   getDocs,
@@ -14,15 +13,20 @@ import {
   deleteDoc,
   doc,
 } from "firebase/firestore";
+import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
+import { Alert } from 'react-bootstrap';
 
 function App() {
-  const [tasks, setTasks] = useState([]); // {id : " ... ", title: " ... "}
+  const [tasks, setTasks] = useState([]); // {id : " ... ", title: " ... ", "imgSrc" : "..."}
+  const [progress, setProgress] = useState(0);
   const [error, setError] = useState("");
   const { currentUser, logout } = useAuth()
   const history = useHistory();
   const usersCollectionRef = collection(db, "users", auth.currentUser.uid, "tasks");
-  // .doc(auth.currentUser).collection('tasks');
 
+
+
+//Fetch task for initial loading
   const fetchTasks = async () => {
     const data = await getDocs(usersCollectionRef);
     setTasks(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
@@ -32,6 +36,28 @@ function App() {
     return fetchTasks();
   }, []);
 
+//upload images for the user
+  const uploadFiles = (file, taskId) => {
+    
+    if (!file) return;
+    const storageRef = ref(storage, `files/${auth.currentUser.uid}/${taskId}`);
+    const uploadTask = uploadBytesResumable(storageRef, file);
+
+    uploadTask.on("state_changed", (snapshot) => {
+        const prog = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+        setProgress(prog);
+      }, (error) => console.log(error), () => {
+        getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) =>{
+        const userDoc = doc(db, "users", auth.currentUser.uid, "tasks", taskId);
+        const newFields = { imgSrc : downloadURL };
+        await updateDoc(userDoc, newFields);
+        fetchTasks();
+        });
+      }
+    );
+  };
+
+//add task, call the upload image (if available else will return nothing) store to firebase
   async function addTask(newTask) {
     if(tasks.includes(newTask)) {
       return;
@@ -40,17 +66,29 @@ function App() {
     fetchTasks();
 
   }
+// delete task and call the fetch tasks to update
   async function deleteTask(id) {
     const userDoc = doc(db, "users", auth.currentUser.uid, "tasks", id);
     await deleteDoc(userDoc);
     fetchTasks();
   }
+
+// to edit the task and call the fetch tasks
   async function editTask(id, input) {
     const userDoc = doc(db, "users", auth.currentUser.uid, "tasks", id);
     const newFields = { title: input };
     await updateDoc(userDoc, newFields);
     fetchTasks();
   }
+
+  async function delImg(id, input) {
+    const userDoc = doc(db, "users", auth.currentUser.uid, "tasks", id);
+    const newFields = { imgSrc: null };
+    await updateDoc(userDoc, newFields);
+    fetchTasks();
+  }
+
+//For the logout button incase the log out fails -> alert will be notified to the user
   async function handleLogout() {
     setError("")
 
@@ -64,6 +102,7 @@ function App() {
 
   return (
     <div className="text-center">
+      {error && <Alert variant="danger">{error}</Alert>}
       <h1 className="">
         Get organized!
       </h1>
@@ -75,8 +114,12 @@ function App() {
               key={index}
               id={taskItem.id}
               content={taskItem.title}
+              imgSrc = {taskItem.imgSrc}
               onDelete={deleteTask}
               onEdit = {editTask}
+              onAddImg = {uploadFiles}
+              uploadProg = {progress}
+              onDelImg = {delImg}
             />
           );
         })}

@@ -24,12 +24,38 @@ function Task(props) {
     const handleChange = (e) => {
         setInput(e.target.value);
     }
+    const handleAddImg = (e) => {
+        e.preventDefault();
+        props.onAddImg(e.target.files[0], props.id);
+    }
+    const handleDelImg = (e) => {
+        props.onDelImg(props.id)
+    }
+
+    const uploadListener = async (e) => {
+        document.getElementById("image-input").click();
+    }
+
     const [isChecked, setCheck] = useState(false)
     const [isEditing, setEditing] = useState(false)
     const [input, setInput] = useState("")
 
     const nonEditingElement = (<div className="flex"><input type="checkbox" checked={isChecked} onChange={handleCheck} className="flex"></input>
     {isChecked? <strike><p className="flex">{props.content}</p></strike>: <p className="flex">{props.content}</p>}
+    <input type="file" onChange={handleAddImg} className="input" style={{ display: 'none' }} id="image-input"></input>
+    <Button variant="info" component="span" onClick={uploadListener}>Upload Image</Button>
+    
+    {props.uploadProg? <h2>Uploading done {props.uploadProg}%</h2>: <div></div>}
+    {props.imgSrc? 
+        <div>
+            <Button variant="danger" component="span" onClick={handleDelImg}>Delete Image</Button>
+            <img src={props.imgSrc} width="500px" alt={props.content} />
+        </div>
+        :
+        <div>
+
+        </div>
+    }
     <Button variant="warning" className="" onClick={handleEdit}>EDIT</Button>
     <Button variant="danger" className="" onClick={handleDelete}>DELETE</Button></div>)
 
