@@ -5,6 +5,7 @@ import { Button } from 'react-bootstrap';
 import { useHistory } from 'react-router-dom';
 import { useAuth } from './contexts/AuthContext';
 import { db } from "./firebase"
+import { auth } from "./firebase"
 import {
   collection,
   getDocs,
@@ -19,7 +20,8 @@ function App() {
   const [error, setError] = useState("");
   const { currentUser, logout } = useAuth()
   const history = useHistory();
-  const usersCollectionRef = collection(db, "tasks");
+  const usersCollectionRef = collection(db, "users", auth.currentUser.uid, "tasks");
+  // .doc(auth.currentUser).collection('tasks');
 
   const fetchTasks = async () => {
     const data = await getDocs(usersCollectionRef);
@@ -39,12 +41,12 @@ function App() {
 
   }
   async function deleteTask(id) {
-    const userDoc = doc(db, "tasks", id);
+    const userDoc = doc(db, "users", auth.currentUser.uid, "tasks", id);
     await deleteDoc(userDoc);
     fetchTasks();
   }
   async function editTask(id, input) {
-    const userDoc = doc(db, "tasks", id);
+    const userDoc = doc(db, "users", auth.currentUser.uid, "tasks", id);
     const newFields = { title: input };
     await updateDoc(userDoc, newFields);
     fetchTasks();
