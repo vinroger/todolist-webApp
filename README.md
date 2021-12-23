@@ -1,16 +1,16 @@
-# To Do List App (React.js)
+# To Do List App (React)
 
 This project is hosted on https://todolist-app.xyz/ 
 
 A responsive to-do-list website with image uploading features integrated with to Firebase User Authentication and Firestore Database.
 
 Features:
-1. Log In with Email and Password 
+1. Log In with email and password 
 2. Make to do list
 3. Add a picture to your to do list to make it memorable
 4. Edit your to do list
 5. Delete to do list
-6. Delete/Reupload Image
+6. Delete/reupload Image
 
 Log-in Page
 ---
