@@ -29,17 +29,24 @@ export function AuthProvider({ children }) {
                 email: email,
                 password: password,
             });
+            await initializeDatabase();
         }
         catch(err){
             console.log(err);
         }
         
     }
+    async function initializeDatabase(){
+        const usersCollectionRef = collection(db, "users", auth.currentUser.uid, "tasks");
+        await addDoc(usersCollectionRef, { title: "Welcome to To Do List!" });
+        await addDoc(usersCollectionRef, { title: "Click to Add Image, Edit, and Delete ->" });
+        await addDoc(usersCollectionRef, { title: "<- Tick this Checkbox after you completed the task!" });
+        return
+    }
 
     function login(email, password) {
         return signInWithEmailAndPassword(auth, email, password)
     }
-
     function logout() {
         return signOut(auth)
     }

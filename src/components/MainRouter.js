@@ -19,7 +19,7 @@ return (
             <AuthProvider>
             <Switch>
                 <PrivateRoute exact path="/" component={App} />
-                <div className="w-100 " style={{ maxWidth: "500px", minHeight: "400px" }}>
+                <div className="w-100 " style={{ maxWidth: "500px" }}>
                     <Route path="/signup" component={Signup} />
                     <Route path="/login" component={Login} />
                 </div>

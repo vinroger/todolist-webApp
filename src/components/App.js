@@ -12,25 +12,33 @@ import {
   updateDoc,
   deleteDoc,
   doc,
+  query,
+  orderBy
+
 } from "firebase/firestore";
 import { ref, getDownloadURL, uploadBytesResumable, deleteObject } from "firebase/storage";
 import { Alert } from 'react-bootstrap';
 import { Card } from 'react-bootstrap';
+import {color1, color2, color3, color4} from './Color';
 
 function App() {
-  const [tasks, setTasks] = useState([]); // {id : " ... ", title: " ... ", "imgSrc" : "..."}
+  const [tasks, setTasks] = useState([]); // The Schema looks like this {id : " ... ", title: " ... ", "imgSrc" : "..."}
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState("");
   const { currentUser, logout } = useAuth()
   const history = useHistory();
   const usersCollectionRef = collection(db, "users", auth.currentUser.uid, "tasks");
+  const orderedCollectionRef = query(usersCollectionRef, orderBy("timestamp"));
+  console.log(usersCollectionRef);
 
 
 
 //Fetch task for initial loading
   const fetchTasks = async () => {
-    const data = await getDocs(usersCollectionRef);
+    const data = await getDocs(orderedCollectionRef);
     setTasks(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+    console.log(data.docs);
+    
   };
 
   useEffect(() => {
@@ -49,6 +57,7 @@ function App() {
         setProgress(prog);
       }, (error) => console.log(error), () => {
         getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) =>{
+          console.log(taskId);
         const userDoc = doc(db, "users", auth.currentUser.uid, "tasks", taskId);
         const newFields = { imgSrc : downloadURL };
         await updateDoc(userDoc, newFields);
@@ -60,19 +69,36 @@ function App() {
 
 //add task, call the upload image (if available else will return nothing) store to firebase
   async function addTask(newTask) {
-    if(tasks.includes(newTask)) {
+    let exist = false;
+    tasks.forEach((task)=>{
+      if (task.title === newTask) {
+        exist = true;
+        return;
+      }
+    });
+    if (exist){
       return;
     }
-    await addDoc(usersCollectionRef, { title: newTask });
+    // if(tasks.includes(newTask)) {
+    //   return;
+    // }
+    await addDoc(usersCollectionRef, { title: newTask, timestamp: Date.now() });
     fetchTasks();
 
   }
 // delete task and call the fetch tasks to update
   async function deleteTask(id) {
+    console.log(id, tasks);
     const userDoc = doc(db, "users", auth.currentUser.uid, "tasks", id);
     await deleteDoc(userDoc);
     const desertRef = ref(storage, `files/${auth.currentUser.uid}/${id}`);
-    await deleteObject(desertRef)
+    try {
+      await deleteObject(desertRef)
+    }
+    catch{
+
+    }
+    
     fetchTasks();
   }
 
@@ -105,22 +131,20 @@ function App() {
     }
   }
 
-  const color1 = '#064635';
-  const color2 = "#519259";
 
   return (
     <div className="">
       {error && <Alert variant="danger">{error}</Alert>}
-      <Card className="text-center rounded m-5 text-light" style={{backgroundColor : color1}}>
+      {/* <Card className="text-center rounded mt-5 mb-3 text-dark" style={{backgroundColor : color3}}>
         <Card.Body style={{width : "700px"}}><h1 className="">Get organized!</h1></Card.Body>
-      </Card>
-      <Card className="text-center rounded m-5 text-light" style={{backgroundColor : color2}}>
-        <Card.Body>
+      </Card> */}
+      <Card className="text-center rounded mb-5 mt-5 text-dark" style={{backgroundColor : color3}}>
+        <Card.Body style={{width : 700}}>
           <h3 className="">Add To-Do List</h3>
           <InputForm className="rounded" onAdd={addTask} />
       </Card.Body>
       </Card>
-      
+    
         {(progress < 100 && progress > 0)? 
           <div>
             <h2>Uploading... {progress}%</h2> 
