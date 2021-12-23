@@ -33,7 +33,7 @@ function App() {
 
 
 
-//Fetch task for initial loading
+//Fetch task from database for initial loading
   const fetchTasks = async () => {
     const data = await getDocs(orderedCollectionRef);
     setTasks(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
@@ -44,7 +44,8 @@ function App() {
     return fetchTasks();
   }, []);
 
-//upload images for the user
+//upload images for the user, store in database, re-fetch tasks to update UI (Upload Image Button)
+//after the images get uploaded, will generate a URL which then will be passed in to corresponding components props.
   const uploadFiles = (file, taskId) => {
     
     if (!file) return;
@@ -65,7 +66,7 @@ function App() {
     );
   };
 
-//add task, call the upload image (if available else will return nothing) store to firebase
+//add task, store to firebase, re-fetch to update the UI
   async function addTask(newTask) {
     let exist = false;
     tasks.forEach((task)=>{
@@ -77,14 +78,11 @@ function App() {
     if (exist){
       return;
     }
-    // if(tasks.includes(newTask)) {
-    //   return;
-    // }
     await addDoc(usersCollectionRef, { title: newTask, timestamp: Date.now() });
     fetchTasks();
 
   }
-// delete task and call the fetch tasks to update
+// delete tasks and their images (if available) and call the re-fetch tasks to update UI
   async function deleteTask(id) {
     const userDoc = doc(db, "users", auth.currentUser.uid, "tasks", id);
     await deleteDoc(userDoc);
@@ -99,7 +97,7 @@ function App() {
     fetchTasks();
   }
 
-// to edit the task and call the fetch tasks
+//edit the task and call the re-fetch tasks to update UI
   async function editTask(id, input) {
     const userDoc = doc(db, "users", auth.currentUser.uid, "tasks", id);
     const newFields = { title: input };
@@ -107,6 +105,7 @@ function App() {
     fetchTasks();
   }
 
+//delete image (del img button): remove img-src props from the schema, remove file from storage, call re-fetch tasks to update UI
   async function delImg(id, input) {
     try {
       const userDoc = doc(db, "users", auth.currentUser.uid, "tasks", id);
@@ -121,7 +120,7 @@ function App() {
     
   }
 
-//For the logout button incase the log out fails -> alert will be notified to the user
+//For the logout button incase the log out fails -> alert will be notified to the user, else bring the user to login page
   async function handleLogout() {
     setError("")
 
@@ -144,13 +143,19 @@ function App() {
           <InputForm className="roundedxl" onAdd={addTask} />
       </Card.Body>
       </Card>
-    
+
+    {/* this is for incase the user upload a big size picture (takes time), 
+    so the progress bar for upload is displayed to make it more interactive */}
+
         {(progress < 100 && progress > 0)? 
           <div className="mx-auto" style={{width: 400}}>
             <h2>Uploading... {progress}%</h2> 
             <ProgressBar now={progress} />
           </div>
           : <div></div>}
+
+    {/* iterate through tasks to make components */}
+
         {tasks.map((taskItem, index) => {
           return (
             <Task

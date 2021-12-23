@@ -4,7 +4,7 @@ import { useAuth } from "../contexts/AuthContext"
 
 export default function PrivateRoute({ component: Component, ...rest }) {
     const { currentUser } = useAuth()
-
+    //Check if the currentUser exists (authenticated) if not then bring the user to login page.
     return (
     <Route
         {...rest}

@@ -6,11 +6,11 @@ import { Button, Form, Container, Row, Col } from 'react-bootstrap';
 function InputForm(props) {
 
     const [input, setInput] = useState("");
-
+    //listen to keypress the user did to input
     const handleChange = (e) => {
         setInput(e.target.value);
     }
-
+    // submit call the function attached to the props
     const handleSubmit = (e) => {
         e.preventDefault();
         if(input.length > 0) {

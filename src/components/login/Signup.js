@@ -14,11 +14,11 @@ export default function Signup() {
 
     async function handleSubmit(e) {
     e.preventDefault()
-
+    //Password and password confirmation validation
     if (passwordRef.current.value !== passwordConfirmRef.current.value) {
         return setError("Passwords do not match")
     }
-
+    //Signup Function
     try {
         setError("")
         setLoading(true)
@@ -38,6 +38,7 @@ export default function Signup() {
         <Card className="roundedxl p-2">
         <Card.Body>
             <h2 className="text-center mb-4">Sign Up</h2>
+            {/* Alert for the errors in case the log in fails */}
             {error && <Alert variant="danger">{error}</Alert>}
             <Form onSubmit={handleSubmit}>
             <Form.Group id="email">

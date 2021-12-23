@@ -13,7 +13,7 @@ export default function Login() {
 
     async function handleSubmit(e) {
     e.preventDefault()
-
+    //Login Function    
     try {
         setError("")
         setLoading(true)
@@ -31,6 +31,7 @@ export default function Login() {
         <Card className="roundedxl p-2 pt-3" style={{ minHeight: "400px" }}>
         <Card.Body>
             <h2 className="text-center mb-4">Log In</h2>
+            {/* Alert for the errors in case the log in fails */}
             {error && <Alert variant="danger">{error}</Alert>}
             <Form onSubmit={handleSubmit}>
             <Form.Group id="email">

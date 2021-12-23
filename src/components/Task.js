@@ -6,36 +6,46 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTrashAlt, faEdit, faImages, faUndo, faTimes } from '@fortawesome/free-solid-svg-icons'
 
 function Task(props) {
+    //Delete Task Button
     function handleDelete() {
         props.onDelete(props.id);
     }
+    //Check box
     function handleCheck(){
         setCheck(!isChecked);
     }
+    //Edit Button
     function handleEdit(){
         setEditing(true);
         setInput(props.content);
     }
+    //Undo Button inside editing mode
     function undoEdit(){
         setEditing(false);
     }
+    //Submit Edit Button inside editing mode
     function handleSubmit(e){
         e.preventDefault();
         props.onEdit(props.id, input);
         
         setEditing(false);
     }
+    //listener to input
     const handleChange = (e) => {
         setInput(e.target.value);
     }
+    // Upload Image Button
     const handleAddImg = (e) => {
         e.preventDefault();
         props.onAddImg(e.target.files[0], props.id);
     }
+    // Delete Image Button
     const handleDelImg = (e) => {
         props.onDelImg(props.id)
     }
-
+    // This is for clicking the "input" inside upload image form. I don't want the user to click "Choose File" and then "Submit"
+    // With this one keypress on the "Upload Image" button will open the choose file dialog and 
+    // await for the user to pick a file and finally execute the upload function inside props.
     const uploadListener = async (e) => {
         document.getElementById("image-input"+ props.id).click();
     }
@@ -45,7 +55,7 @@ function Task(props) {
     const [input, setInput] = useState("")
 
 
-
+    // Check if there is imgSrc attached to the props. If yes then render the image.
     const imageElement = (<div>
         {props.imgSrc && 
         <div>
@@ -68,6 +78,10 @@ function Task(props) {
         </div>
         }
     </div>)
+
+    //Since the Edit Button is interactive, it will replace some of the elements for "editing" mode. 
+    //In this case I set up two variables for editing and nonediting. 
+    //These will be shown according to the "editing state", which will be toggled inside the edit button.
 
     const nonEditingElement = (
     <Card  className="roundedxl text-dark mx-auto my-3 task-card" style={{backgroundColor : '#fff2e0b9'}}>
@@ -153,6 +167,7 @@ function Task(props) {
         </Card>
     )
 
+    //The end components which check if the state "isEditing" is true and return the correct components.
     return (
         <div>
             {isEditing? editingElement:nonEditingElement}
