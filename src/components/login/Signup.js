@@ -35,7 +35,7 @@ export default function Signup() {
 
     return (
     <>
-        <Card className="rounded p-2">
+        <Card className="roundedxl p-2">
         <Card.Body>
             <h2 className="text-center mb-4">Sign Up</h2>
             {error && <Alert variant="danger">{error}</Alert>}

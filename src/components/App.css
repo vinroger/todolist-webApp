@@ -1,0 +1,44 @@
+.roundedxl{
+    border-radius: 1rem !important;
+}
+.title-card{
+    width: 700px;
+    margin-top: 3.5rem;
+}
+.input-task{
+    width: 520px;
+}
+.task-card{
+    width: 600px;
+}
+.rcontainer-xs{
+    display:none;
+}
+@media (max-width: 768px) {
+    .title-card {
+        width: 400px;
+    }
+    .input-task{
+        width: 230px;
+    }
+    .task-card{
+        width: 400px;
+    }
+    .rcontainer-xl{
+        display: none;
+    }
+    .rcontainer-xs{
+        display: inline;
+    }
+}
+
+
+
+
+
+
+/* code {
+    font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+} */
+

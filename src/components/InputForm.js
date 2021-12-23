@@ -25,8 +25,8 @@ function InputForm(props) {
     }
     return (
         <div>
-        <Form className="text-center" onSubmit={handleSubmit}>
-            <Container fluid className="mt-3">
+        <Form className="" onSubmit={handleSubmit}>
+            <Container fluid className="mt-3 rcontainer-xl">
                 <Row>
                     <Col xs={10}>
                         <Form.Control type="text" value={input} className="w-100 mx-auto inline " placeholder="Write Something" onChange={e => handleChange(e)}></Form.Control>
@@ -35,6 +35,10 @@ function InputForm(props) {
                     <Button disabled={!input} variant="dark" className=""  type="submit">Submit</Button>
                     </Col>
                 </Row>
+            </Container>
+            <Container fluid className="mt-3 rcontainer-xs">
+                    <Form.Control type="text" value={input} className="mx-auto inline input-task" placeholder="Write Something" onChange={e => handleChange(e)}></Form.Control>
+                    <Button disabled={!input} variant="dark" className="mt-3"  type="submit">Submit</Button>
             </Container>
             
         </Form>

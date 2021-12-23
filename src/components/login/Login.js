@@ -28,7 +28,7 @@ export default function Login() {
 
     return (
     <>
-        <Card className="rounded p-2 pt-3" style={{ minHeight: "400px" }}>
+        <Card className="roundedxl p-2 pt-3" style={{ minHeight: "400px" }}>
         <Card.Body>
             <h2 className="text-center mb-4">Log In</h2>
             {error && <Alert variant="danger">{error}</Alert>}

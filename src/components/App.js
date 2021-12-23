@@ -17,9 +17,10 @@ import {
 
 } from "firebase/firestore";
 import { ref, getDownloadURL, uploadBytesResumable, deleteObject } from "firebase/storage";
-import { Alert } from 'react-bootstrap';
-import { Card } from 'react-bootstrap';
+import { Alert, Container, Card } from 'react-bootstrap';
 import {color1, color2, color3, color4} from './Color';
+import "./App.css"
+
 
 function App() {
   const [tasks, setTasks] = useState([]); // The Schema looks like this {id : " ... ", title: " ... ", "imgSrc" : "..."}
@@ -29,7 +30,6 @@ function App() {
   const history = useHistory();
   const usersCollectionRef = collection(db, "users", auth.currentUser.uid, "tasks");
   const orderedCollectionRef = query(usersCollectionRef, orderBy("timestamp"));
-  console.log(usersCollectionRef);
 
 
 
@@ -37,7 +37,6 @@ function App() {
   const fetchTasks = async () => {
     const data = await getDocs(orderedCollectionRef);
     setTasks(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-    console.log(data.docs);
     
   };
 
@@ -57,7 +56,6 @@ function App() {
         setProgress(prog);
       }, (error) => console.log(error), () => {
         getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) =>{
-          console.log(taskId);
         const userDoc = doc(db, "users", auth.currentUser.uid, "tasks", taskId);
         const newFields = { imgSrc : downloadURL };
         await updateDoc(userDoc, newFields);
@@ -88,7 +86,6 @@ function App() {
   }
 // delete task and call the fetch tasks to update
   async function deleteTask(id) {
-    console.log(id, tasks);
     const userDoc = doc(db, "users", auth.currentUser.uid, "tasks", id);
     await deleteDoc(userDoc);
     const desertRef = ref(storage, `files/${auth.currentUser.uid}/${id}`);
@@ -111,12 +108,17 @@ function App() {
   }
 
   async function delImg(id, input) {
-    const userDoc = doc(db, "users", auth.currentUser.uid, "tasks", id);
-    const newFields = { imgSrc: null };
-    const desertRef = ref(storage, `files/${auth.currentUser.uid}/${id}`);
-    await deleteObject(desertRef)
-    await updateDoc(userDoc, newFields);
-    fetchTasks();
+    try {
+      const userDoc = doc(db, "users", auth.currentUser.uid, "tasks", id);
+      const newFields = { imgSrc: null };
+      const desertRef = ref(storage, `files/${auth.currentUser.uid}/${id}`);
+      await updateDoc(userDoc, newFields);
+      fetchTasks();
+      await deleteObject(desertRef)
+    } catch (err){
+      console.log(err);
+    }
+    
   }
 
 //For the logout button incase the log out fails -> alert will be notified to the user
@@ -134,19 +136,17 @@ function App() {
 
   return (
     <div className="">
+    <Container fluid>
       {error && <Alert variant="danger">{error}</Alert>}
-      {/* <Card className="text-center rounded mt-5 mb-3 text-dark" style={{backgroundColor : color3}}>
-        <Card.Body style={{width : "700px"}}><h1 className="">Get organized!</h1></Card.Body>
-      </Card> */}
-      <Card className="text-center rounded mb-5 mt-5 text-dark" style={{backgroundColor : color3}}>
-        <Card.Body style={{width : 700}}>
+      <Card className="text-center roundedxl mb-5 text-dark title-card" style={{backgroundColor : color3}}>
+        <Card.Body className="">
           <h3 className="">Add To-Do List</h3>
-          <InputForm className="rounded" onAdd={addTask} />
+          <InputForm className="roundedxl" onAdd={addTask} />
       </Card.Body>
       </Card>
     
         {(progress < 100 && progress > 0)? 
-          <div>
+          <div className="mx-auto" style={{width: 400}}>
             <h2>Uploading... {progress}%</h2> 
             <ProgressBar now={progress} />
           </div>
@@ -171,7 +171,7 @@ function App() {
           Log Out
         </Button>
       </div>
-
+      </Container>
     </div>
   );
 }
