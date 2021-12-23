@@ -1,4 +1,4 @@
-# To Do List App
+# To Do List App (React.js)
 
 This project is hosted on https://todolist-app.xyz/ 
 
