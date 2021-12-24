@@ -23,7 +23,7 @@ import "./App.css"
 
 
 function App() {
-  const [tasks, setTasks] = useState([]); // The Schema looks like this {id : " ... ", title: " ... ", "imgSrc" : "..."}
+  const [tasks, setTasks] = useState([]); // The Schema looks like this {id : " ... ", title: " ... ", "imgSrc" : "...", "check" : " ..."}
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState("");
   const { currentUser, logout } = useAuth()
@@ -78,7 +78,7 @@ function App() {
     if (exist){
       return;
     }
-    await addDoc(usersCollectionRef, { title: newTask, timestamp: Date.now() });
+    await addDoc(usersCollectionRef, { title: newTask, checked: false, timestamp: Date.now() });
     fetchTasks();
 
   }
@@ -119,6 +119,13 @@ function App() {
     }
     
   }
+// check the checkbox
+  async function checkBox(id, value){
+    const userDoc = doc(db, "users", auth.currentUser.uid, "tasks", id);
+    const newFields = { checked: !value };
+    await updateDoc(userDoc, newFields);
+    fetchTasks();
+  } 
 
 //For the logout button incase the log out fails -> alert will be notified to the user, else bring the user to login page
   async function handleLogout() {
@@ -163,10 +170,12 @@ function App() {
               id={taskItem.id}
               content={taskItem.title}
               imgSrc = {taskItem.imgSrc}
+              checked = {taskItem.checked}
               onDelete={deleteTask}
               onEdit = {editTask}
               onAddImg = {uploadFiles}
               onDelImg = {delImg}
+              onCheck = {checkBox}
             />
           );
         })}

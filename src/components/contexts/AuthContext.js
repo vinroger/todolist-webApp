@@ -28,9 +28,9 @@ export function AuthProvider({ children }) {
     //When a new user is created, I want the todolist to be instantiated with pre-defined pictures and tasks to intro/demo the user ("Welcome to todolist, click this and that")
     async function initializeDatabase(){
         const usersCollectionRef = collection(db, "users", auth.currentUser.uid, "tasks");
-        await addDoc(usersCollectionRef, { title: "Welcome to To Do List!", timestamp: Date.now() });
-        await addDoc(usersCollectionRef, { title: "<- Tick this Checkbox after you completed the task!", timestamp: Date.now() });
-        await addDoc(usersCollectionRef, { title: "Click to Add Image, Edit, and Delete ->", timestamp: Date.now(), imgSrc:"https://firebasestorage.googleapis.com/v0/b/todolist-77a88.appspot.com/o/husky.jpg?alt=media&token=74e79f43-f95d-4faf-aeed-afc81f45e295"});
+        await addDoc(usersCollectionRef, { title: "Welcome to To Do List!", timestamp: Date.now(), checked: false });
+        await addDoc(usersCollectionRef, { title: "<- Tick this Checkbox after you completed the task!", timestamp: Date.now(), checked: false });
+        await addDoc(usersCollectionRef, { title: "Click to Add Image, Edit, and Delete ->", timestamp: Date.now(), imgSrc:"https://firebasestorage.googleapis.com/v0/b/todolist-77a88.appspot.com/o/husky.jpg?alt=media&token=74e79f43-f95d-4faf-aeed-afc81f45e295" , checked: false});
         return
     }
     //Sign Up the user, initialize template database

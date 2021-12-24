@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import { Button } from 'react-bootstrap';
 import { Form, Card, Container, Row, Col } from 'react-bootstrap';
 import {color1, color2, color3, color4} from './Color';
@@ -11,8 +11,9 @@ function Task(props) {
         props.onDelete(props.id);
     }
     //Check box
-    function handleCheck(){
+    async function handleCheck(){
         setCheck(!isChecked);
+        await props.onCheck(props.id, isChecked);
     }
     //Edit Button
     function handleEdit(){
@@ -50,7 +51,7 @@ function Task(props) {
         document.getElementById("image-input"+ props.id).click();
     }
 
-    const [isChecked, setCheck] = useState(false)
+    const [isChecked, setCheck] = useState(props.checked)
     const [isEditing, setEditing] = useState(false)
     const [input, setInput] = useState("")
 
